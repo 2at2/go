@@ -311,9 +311,9 @@ func ProxyURL(fixedURL *url.URL) func(*Request) (*url.URL, error) {
 // optional extra headers to write and stores any error to return
 // from roundTrip.
 type transportRequest struct {
-	*Request                        // original request, not to be mutated
-	extra    Header                 // extra headers to write, or nil
-	trace    *httptrace.ClientTrace // optional
+	*Request                     // original request, not to be mutated
+	extra Header                 // extra headers to write, or nil
+	trace *httptrace.ClientTrace // optional
 
 	mu  sync.Mutex // guards err
 	err error      // first setError value for mapRoundTripError to consider
@@ -1692,7 +1692,7 @@ func (pc *persistConn) readLoopPeekFailLocked(peekErr error) {
 	}
 }
 
-// readResponse reads an HTTP response (or two, in the case of "Expect:
+// readResponse reads an HTTP response (or more, in the case of "Expect:
 // 100-continue") from the server. It returns the final non-100 one.
 // trace is optional.
 func (pc *persistConn) readResponse(rc requestAndChan, trace *httptrace.ClientTrace) (resp *Response, err error) {
@@ -1715,13 +1715,17 @@ func (pc *persistConn) readResponse(rc requestAndChan, trace *httptrace.ClientTr
 			close(rc.continueCh)
 		}
 	}
-	if resp.StatusCode == 100 {
-		pc.readLimit = pc.maxHeaderResponseSize() // reset the limit
-		resp, err = ReadResponse(pc.br, rc.req)
-		if err != nil {
-			return
+
+	for i := 0; i < 3; i++ {
+		if resp.StatusCode == 100 {
+			pc.readLimit = pc.maxHeaderResponseSize() // reset the limit
+			resp, err = ReadResponse(pc.br, rc.req)
+			if err != nil {
+				return
+			}
 		}
 	}
+
 	resp.TLS = pc.tlsState
 	return
 }
