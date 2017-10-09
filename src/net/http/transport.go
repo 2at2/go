@@ -311,9 +311,9 @@ func ProxyURL(fixedURL *url.URL) func(*Request) (*url.URL, error) {
 // optional extra headers to write and stores any error to return
 // from roundTrip.
 type transportRequest struct {
-	*Request                     // original request, not to be mutated
-	extra Header                 // extra headers to write, or nil
-	trace *httptrace.ClientTrace // optional
+	*Request                        // original request, not to be mutated
+	extra    Header                 // extra headers to write, or nil
+	trace    *httptrace.ClientTrace // optional
 
 	mu  sync.Mutex // guards err
 	err error      // first setError value for mapRoundTripError to consider
@@ -1725,7 +1725,6 @@ func (pc *persistConn) readResponse(rc requestAndChan, trace *httptrace.ClientTr
 			}
 		}
 	}
-
 	resp.TLS = pc.tlsState
 	return
 }
