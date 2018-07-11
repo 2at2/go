@@ -1778,11 +1778,14 @@ func (pc *persistConn) readResponse(rc requestAndChan, trace *httptrace.ClientTr
 			close(rc.continueCh)
 		}
 	}
-	if resp.StatusCode == 100 {
-		pc.readLimit = pc.maxHeaderResponseSize() // reset the limit
-		resp, err = ReadResponse(pc.br, rc.req)
-		if err != nil {
-			return
+
+	for i := 0; i < 3; i++ {
+		if resp.StatusCode == 100 {
+			pc.readLimit = pc.maxHeaderResponseSize() // reset the limit
+			resp, err = ReadResponse(pc.br, rc.req)
+			if err != nil {
+				return
+			}
 		}
 	}
 	resp.TLS = pc.tlsState
