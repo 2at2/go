@@ -1,3 +1,4 @@
+# Builder image
 FROM golang:1.4 as source
 COPY . /opt/go
 WORKDIR /opt/go
@@ -6,6 +7,7 @@ RUN set -ex \
     && cd src/ \
     && ./all.bash
 
+# Main image
 FROM ubuntu:16.04
 COPY --from=source /opt/go /usr/local/go
 
