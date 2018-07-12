@@ -11,6 +11,9 @@ RUN set -ex \
 FROM ubuntu:16.04
 COPY --from=source /opt/go /usr/local/go
 
+RUN set -ex \
+    && apt-get install make
+
 ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 
