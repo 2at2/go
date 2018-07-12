@@ -13,7 +13,7 @@ COPY --from=source /opt/go /usr/local/go
 
 RUN set -ex \
     && apt-get update \
-    && apt-get install -y make
+    && apt-get install -y make git
 
 ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
