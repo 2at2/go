@@ -12,7 +12,8 @@ FROM ubuntu:16.04
 COPY --from=source /opt/go /usr/local/go
 
 RUN set -ex \
-    && apt-get install make
+    && apt-get update \
+    && apt-get install -y make
 
 ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
