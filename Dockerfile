@@ -22,5 +22,7 @@ RUN set -ex \
     && mkdir $GOPATH \
     && mkdir $GOPATH/src \
     && chmod -R 777 $GOPATH \
+    && mkdir ./cache \
+    && chmod 777 ./cache \
     && ln -s /usr/local/go/bin/go /usr/local/bin
 
